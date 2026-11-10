@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.0.1 - 2026-11-10
+
+> [!IMPORTANT]
+> This is a new major version (0.x → 2.x).
+
+> [!WARNING]
+> This version has breaking changes! More details below.
+
+### Breaking Changes
+
+- Restore Special AI's mod id *[commit by [@ndellagrotte](https://github.com/ndellagrotte), Claude Fable 5.2 in [09ade2e](https://github.com/ndellagrotte/ordinary-ai/commit/09ade2e12a11ea9fb95750e73edc450da7e6c6b3)]*
+  - The mod id is `specialai`. Settings are read from config/specialai.cfg, so rename config/ordinaryai.cfg to keep them, and the reload command is `/specialai reload`.
+
+**Full Changelog**: https://github.com/ndellagrotte/ordinary-ai/compare/0.0.1...2.0.1
+
 ## 0.0.1 - 2026-11-10
 
 ### Feature
