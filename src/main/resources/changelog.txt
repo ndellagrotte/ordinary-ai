@@ -1,4 +1,4 @@
-Ordinary AI (unreleased)
+Ordinary AI 2.0.1
     - The mod id is "specialai" again, as in Special AI. Mods and packs that look for Special AI by its id find
       this mod.
     - Coming from 0.0.1: rename config/ordinaryai.cfg to config/specialai.cfg to keep your settings. The reload
