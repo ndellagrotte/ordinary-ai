@@ -1,4 +1,4 @@
-Ordinary AI (unreleased)
+Ordinary AI 0.0.1
     A port of Special AI 1.1.0 to the Cleanroom loader. Same features and options, under a new name.
     - Moving over from Special AI:
         - config/Special_AI.cfg is copied to config/ordinaryai.cfg the first time the mod runs. Every option keeps
