@@ -189,6 +189,8 @@ commit_parsers = [
     { message = "^Merge", skip = true },
     { message = "^revert", skip = true },
     { message = "^Signed-off-by", skip = true },
-    { message = "^Co-authored-by", group = "<!-- 10 -->Co-authors" },
+    # Local change, re-apply after `extractConventions`: (?i) so that `Co-Authored-By:` is folded into the
+    # byline too, rather than listed under Other as an entry of its own.
+    { message = "(?i)^Co-authored-by", group = "<!-- 10 -->Co-authors" },
     { message = ".*", group = "<!-- 9 -->Other" }
 ]
