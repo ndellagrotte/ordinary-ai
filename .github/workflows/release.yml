@@ -17,6 +17,7 @@ jobs:
     uses: CleanroomMC/Conventions/.github/workflows/release.yml@1.5.0
     with:
       publish-maven: false
-      # Needs curseforge_project_id or modrinth_project_id in gradle.properties, and the matching token secret
-      publish-mods: true
+      # Off until there is a store project to publish to. Turning it on needs curseforge_project_id or
+      # modrinth_project_id in gradle.properties and the matching token secret, or the release fails its preflight
+      publish-mods: false
     secrets: inherit
