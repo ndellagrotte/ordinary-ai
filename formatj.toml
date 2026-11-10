@@ -16,11 +16,11 @@ tab-width = 4
 [indent]
 size = 4
 use-tabs = false
-continuation = 4
-chained-call = 4
-array-initializer = 4
-ternary = 4
-throws-clause = 4
+continuation = 8
+chained-call = 8
+array-initializer = 8
+ternary = 8
+throws-clause = 8
 switch-case-labels = true
 switch-case-body = true
 blank-lines = false
@@ -32,7 +32,7 @@ method-arguments = "wrap-if-long"
 chained-calls = "break-all-when-too-long"
 chain-threshold = 2
 binary-operators = "wrap-if-long"
-operator-position = "after-operator"
+operator-position = "before-operator"
 method-reference = "never"
 method-reference-operator-position = "before-operator"
 instanceof = "preserve"
@@ -45,12 +45,11 @@ ternary = "wrap-if-long"
 assignment = "never"
 assignment-break = "inside-value"
 hug-sole-argument = true
-array-initializers = "chop-down-if-long"
-extends-implements = "never"
+array-initializers = "wrap-if-long"
+extends-implements = "wrap-if-long"
 throws-clause = "wrap-if-long"
-type-parameters = "never"
 annotation-arguments = "wrap-if-long"
-closing-delimiter = "own-line"
+closing-delimiter = "attached"
 break-after-open-paren = false
 enum-constants = "chop-down-always"
 require-enum-constant-semicolon = false
@@ -73,7 +72,7 @@ catch-on-new-line = false
 finally-on-new-line = false
 empty-class-body = "spaced"
 empty-method-body = "spaced"
-empty-control-body = "expanded"
+empty-control-body = "spaced"
 
 [spacing]
 before-method-declaration-parenthesis = false
@@ -140,6 +139,7 @@ trailing-comments = "none"
 declaration-placement = "new-line"
 parameter-placement = "same-line"
 field-placement = "same-line"
+package-placement = "same-line"
 single-marker-inline = false
 
 [imports]
@@ -167,6 +167,7 @@ remove-unused = false
 
 [modifiers]
 order = "canonical"
+visibility-position = "first"
 remove-redundant = true
 
 [module]
@@ -232,7 +233,7 @@ body-braces = "when-multi-statement"
 keep-single-expression-inline = true
 
 [text-blocks]
-indent-policy = "preserve"
+indent-policy = "minimal"
 closing-delimiter-on-own-line = false
 escape-trailing-spaces = false
 
@@ -252,8 +253,15 @@ keep-array-initializer-layout = false
 respect-existing-chain-breaks = false
 never-join-lines = false
 
+[declarations]
+split-variables = true
+
 [arrays]
 c-style-brackets = "java"
 
 [members]
 order = "intellij"
+field-order = ["static-final", "static", "final", "instance"]
+visibility-order = ["public", "protected", "package-private", "private"]
+field-visibility-order = true
+method-visibility-order = true
