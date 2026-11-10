@@ -50,11 +50,9 @@ final class ThrowPlayerTask extends EliteTask {
         Items.LEATHER_HELMET.setColor(helmet, 0xFF0000);
         mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, helmet);
         modify(mob, SharedMonsterAttributes.KNOCKBACK_RESISTANCE, "Playerthrower knockback resistance",
-            config.throwPlayerKnockbackResistance(), ADD
-        );
+                config.throwPlayerKnockbackResistance(), ADD);
         modify(mob, SharedMonsterAttributes.MAX_HEALTH, "Playerthrower health boost", config.throwPlayerHealthBoost(),
-            ADD
-        );
+                ADD);
     }
 
     @Override
@@ -80,11 +78,11 @@ final class ThrowPlayerTask extends EliteTask {
 
     @Override
     public boolean shouldContinueExecuting() {
-        return phase != Phase.IDLE &&
-            mob.getAttackTarget() != null &&
-            !mob.isRiding() &&
-            destination != null &&
-            destination.isEntityAlive();
+        return phase != Phase.IDLE
+                && mob.getAttackTarget() != null
+                && !mob.isRiding()
+                && destination != null
+                && destination.isEntityAlive();
     }
 
     @Override
@@ -113,6 +111,18 @@ final class ThrowPlayerTask extends EliteTask {
         if (now > giveUpAt) {
             phase = Phase.IDLE;
         }
+    }
+
+    @Override
+    public void resetTask() {
+        List<Entity> passengers = mob.getPassengers();
+        if (!passengers.isEmpty()) {
+            passengers.get(0).dismountRidingEntity();
+        }
+        mob.getNavigator().clearPath();
+        phase = Phase.IDLE;
+        destination = null;
+        readyAt = now() + (80L + mob.getRNG().nextInt(41)) * TaskUtil.EVALUATION_INTERVAL;
     }
 
     private void grab(EntityLiving allies, long now) {
@@ -148,18 +158,6 @@ final class ThrowPlayerTask extends EliteTask {
         }
     }
 
-    @Override
-    public void resetTask() {
-        List<Entity> passengers = mob.getPassengers();
-        if (!passengers.isEmpty()) {
-            passengers.get(0).dismountRidingEntity();
-        }
-        mob.getNavigator().clearPath();
-        phase = Phase.IDLE;
-        destination = null;
-        readyAt = now() + (80L + mob.getRNG().nextInt(41)) * TaskUtil.EVALUATION_INTERVAL;
-    }
-
     /**
      * Returns the ally fighting the same target that has the most company around it, or null if any such ally is
      * already on top of the target (in which case there is nowhere better to throw it).
@@ -167,8 +165,7 @@ final class ThrowPlayerTask extends EliteTask {
     private @Nullable
     EntityLiving findDestination(EntityLivingBase target) {
         List<Entity> nearby = mob.world.getEntitiesWithinAABBExcludingEntity(mob,
-            target.getEntityBoundingBox().grow(16.0, 8.0, 16.0)
-        );
+                target.getEntityBoundingBox().grow(16.0, 8.0, 16.0));
         EntityLiving best = null;
         int bestCrowd = -1;
         for (Entity entity : nearby) {

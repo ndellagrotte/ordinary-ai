@@ -33,13 +33,13 @@ public final class BlockBreaking {
     private BlockBreaking() { }
 
     /** Returns true if the mob is able and allowed to destroy the block. Other mods can veto through Forge events. */
-    public static boolean mayDestroy(IBlockState state, EntityLiving mob, boolean needsTool, World world, BlockPos pos
-    ) {
-        return state.getBlockHardness(world, pos) >= 0.0F &&
-            !state.getMaterial().isLiquid() &&
-            (!needsTool || canHarvest(mob.getHeldItemMainhand(), state)) &&
-            state.getBlock().canEntityDestroy(state, world, pos, mob) &&
-            ForgeEventFactory.onEntityDestroyBlock(mob, pos, state);
+    public static boolean mayDestroy(IBlockState state, EntityLiving mob, boolean needsTool, World world,
+            BlockPos pos) {
+        return state.getBlockHardness(world, pos) >= 0.0F
+                && !state.getMaterial().isLiquid()
+                && (!needsTool || canHarvest(mob.getHeldItemMainhand(), state))
+                && state.getBlock().canEntityDestroy(state, world, pos, mob)
+                && ForgeEventFactory.onEntityDestroyBlock(mob, pos, state);
     }
 
     /** Returns the fraction of the block the mob breaks in one tick, before any speed multiplier. */

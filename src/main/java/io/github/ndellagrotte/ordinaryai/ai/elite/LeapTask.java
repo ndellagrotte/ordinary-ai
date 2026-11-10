@@ -31,8 +31,8 @@ final class LeapTask extends EliteTask {
             // A leaper needs to fight up close
             mob.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.GOLDEN_SWORD));
         }
-        modify(mob, SharedMonsterAttributes.MOVEMENT_SPEED, "Leaper speed boost", config.leapSpeedBoost(), MULTIPLY_BASE
-        );
+        modify(mob, SharedMonsterAttributes.MOVEMENT_SPEED, "Leaper speed boost", config.leapSpeedBoost(),
+                MULTIPLY_BASE);
     }
 
     @Override

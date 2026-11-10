@@ -53,13 +53,12 @@ public final class ReloadCommand extends CommandBase {
         }
         notifyCommandListener(sender, this, OrdinaryAI.NAME + " config reloaded");
         sender.sendMessage(
-            new TextComponentString("Settings rolled per mob when it spawned are kept; new values apply from now on."));
+                new TextComponentString("Settings rolled per mob when it spawned are kept; new values apply from now on."));
     }
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
-        @Nullable BlockPos targetPos
-    ) {
+            @Nullable BlockPos targetPos) {
         return args.length == 1 ? getListOfStringsMatchingLastWord(args, "reload") : Collections.emptyList();
     }
 

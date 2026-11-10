@@ -43,11 +43,31 @@ public final class DefendVillageTask extends EntityAITarget implements OrdinaryT
         }
         if (taskOwner instanceof EntityVillager) {
             taskOwner.world.playSound(null, new BlockPos(taskOwner), SoundEvents.ENTITY_VILLAGER_NO,
-                taskOwner.getSoundCategory(), 1.0F, 1.0F / (taskOwner.getRNG().nextFloat() * 0.4F + 0.8F)
-            );
+                    taskOwner.getSoundCategory(), 1.0F, 1.0F / (taskOwner.getRNG().nextFloat() * 0.4F + 0.8F));
         }
         aggressorPlayerId = aggressor instanceof EntityPlayer ? aggressor.getUniqueID() : null;
         return true;
+    }
+
+    @Override
+    public void startExecuting() {
+        taskOwner.setAttackTarget(aggressor);
+        super.startExecuting();
+    }
+
+    @Override
+    public boolean shouldContinueExecuting() {
+        if (!super.shouldContinueExecuting()) {
+            return false;
+        }
+        Village home = village;
+        UUID playerId = aggressorPlayerId;
+        if (home == null || playerId == null) {
+            return true;
+        }
+        // Players can be forgiven mid-fight once their standing recovers
+        return Reputation.keepsAttacking(home.getPlayerReputation(playerId),
+                ModConfig.get().villages().blockAggressionLimit(), taskOwner.getRNG().nextFloat());
     }
 
     private boolean findAggressor() {
@@ -70,28 +90,6 @@ public final class DefendVillageTask extends EntityAITarget implements OrdinaryT
         }
         aggressor = home.getNearestTargetPlayer(taskOwner);
         return isSuitableTarget(aggressor, false);
-    }
-
-    @Override
-    public void startExecuting() {
-        taskOwner.setAttackTarget(aggressor);
-        super.startExecuting();
-    }
-
-    @Override
-    public boolean shouldContinueExecuting() {
-        if (!super.shouldContinueExecuting()) {
-            return false;
-        }
-        Village home = village;
-        UUID playerId = aggressorPlayerId;
-        if (home == null || playerId == null) {
-            return true;
-        }
-        // Players can be forgiven mid-fight once their standing recovers
-        return Reputation.keepsAttacking(home.getPlayerReputation(playerId),
-            ModConfig.get().villages().blockAggressionLimit(), taskOwner.getRNG().nextFloat()
-        );
     }
 
 }

@@ -35,8 +35,8 @@ public final class VillageTicking {
     public static boolean isLoaded(World world, BlockPos center) {
         for (int x = -LOAD_CHECK_CHUNKS; x <= LOAD_CHECK_CHUNKS; x++) {
             for (int z = -LOAD_CHECK_CHUNKS; z <= LOAD_CHECK_CHUNKS; z++) {
-                if (Math.abs(x) + Math.abs(z) <= LOAD_CHECK_CHUNKS &&
-                    !world.isBlockLoaded(center.add(x << 4, 0, z << 4))) {
+                if (Math.abs(x) + Math.abs(z) <= LOAD_CHECK_CHUNKS
+                        && !world.isBlockLoaded(center.add(x << 4, 0, z << 4))) {
                     return false;
                 }
             }

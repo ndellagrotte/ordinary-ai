@@ -37,8 +37,7 @@ final class ThrowAllyTask extends EliteTask {
 
     static void equip(EntityLiving mob, ConfigSnapshot.Elite config) {
         modify(mob, SharedMonsterAttributes.MOVEMENT_SPEED, "Thrower speed boost", config.throwSpeedBoost(),
-            MULTIPLY_BASE
-        );
+                MULTIPLY_BASE);
     }
 
     @Override
@@ -72,9 +71,9 @@ final class ThrowAllyTask extends EliteTask {
 
     @Override
     public boolean shouldContinueExecuting() {
-        return mob.getAttackTarget() != null &&
-            !mob.isRiding() &&
-            (ally != null && ally.isEntityAlive() || mob.isBeingRidden());
+        return mob.getAttackTarget() != null
+                && !mob.isRiding()
+                && (ally != null && ally.isEntityAlive() || mob.isBeingRidden());
     }
 
     @Override
@@ -120,6 +119,16 @@ final class ThrowAllyTask extends EliteTask {
         }
     }
 
+    @Override
+    public void resetTask() {
+        List<Entity> passengers = mob.getPassengers();
+        if (!passengers.isEmpty()) {
+            passengers.get(0).dismountRidingEntity();
+        }
+        mob.getNavigator().clearPath();
+        ally = null;
+    }
+
     private void throwPassengerAt(EntityLivingBase target) {
         List<Entity> passengers = mob.getPassengers();
         if (passengers.isEmpty()) {
@@ -135,16 +144,6 @@ final class ThrowAllyTask extends EliteTask {
         TaskUtil.swingArms(mob);
     }
 
-    @Override
-    public void resetTask() {
-        List<Entity> passengers = mob.getPassengers();
-        if (!passengers.isEmpty()) {
-            passengers.get(0).dismountRidingEntity();
-        }
-        mob.getNavigator().clearPath();
-        ally = null;
-    }
-
     /**
      * Returns the nearest grounded ally that shares the target, is still some way from it, and is closer to this mob
      * than the target is.
@@ -156,14 +155,13 @@ final class ThrowAllyTask extends EliteTask {
             return null;
         }
         List<EntityLiving> candidates = mob.world.getEntitiesWithinAABB(EntityLiving.class,
-            mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
-            candidate -> candidate != mob &&
-                candidate.isEntityAlive() &&
-                candidate.onGround &&
-                !candidate.isRiding() &&
-                candidate.getAttackTarget() == target &&
-                candidate.getDistanceSq(target) > 36.0
-        );
+                mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
+                candidate -> candidate != mob
+                        && candidate.isEntityAlive()
+                        && candidate.onGround
+                        && !candidate.isRiding()
+                        && candidate.getAttackTarget() == target
+                        && candidate.getDistanceSq(target) > 36.0);
         EntityLiving nearest = null;
         for (EntityLiving candidate : candidates) {
             double distanceSq = mob.getDistanceSq(candidate);

@@ -55,10 +55,11 @@ public final class ReputationEvents {
         }
 
         Reputation.BreakOutcome outcome = Reputation.onBlockBroken(village.getPlayerReputation(player.getUniqueID()),
-            config.blockRepLossLimit(), treasured ? config.blockTreasuredRepLossChance() : config.blockRepLossChance(),
-            config.blockAggressionLimit(),
-            treasured ? config.blockTreasuredAggressionChance() : config.blockAggressionChance(), world.rand::nextDouble
-        );
+                config.blockRepLossLimit(),
+                treasured ? config.blockTreasuredRepLossChance() : config.blockRepLossChance(),
+                config.blockAggressionLimit(),
+                treasured ? config.blockTreasuredAggressionChance() : config.blockAggressionChance(),
+                world.rand::nextDouble);
         if (outcome.loseReputation()) {
             changeReputation(player, pos, village, -1);
         }
@@ -85,8 +86,7 @@ public final class ReputationEvents {
         if (config.reputationParticles() && player.world instanceof WorldServer world) {
             // Sent as a vanilla particle packet, so clients do not need this mod to see it
             world.spawnParticle(gained ? EnumParticleTypes.VILLAGER_HAPPY : EnumParticleTypes.VILLAGER_ANGRY,
-                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, gained ? 10 : 5, 0.45, 0.45, 0.45, 0.02
-            );
+                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, gained ? 10 : 5, 0.45, 0.45, 0.45, 0.02);
         }
         playSound(player.world, pos, gained ? SoundEvents.ENTITY_VILLAGER_YES : SoundEvents.ENTITY_VILLAGER_NO, config);
     }
@@ -100,9 +100,9 @@ public final class ReputationEvents {
 
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        if (event.getWorld().isRemote ||
-            !ModConfig.isLoaded() ||
-            !(event.getEntity() instanceof EntityVillager villager)) {
+        if (event.getWorld().isRemote
+                || !ModConfig.isLoaded()
+                || !(event.getEntity() instanceof EntityVillager villager)) {
             return;
         }
         ConfigSnapshot.Villages config = ModConfig.get().villages();
@@ -118,15 +118,15 @@ public final class ReputationEvents {
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
         EntityLivingBase victim = event.getEntityLiving();
-        if (victim.world.isRemote ||
-            !ModConfig.isLoaded() ||
-            !(event.getSource().getTrueSource() instanceof EntityPlayer player)) {
+        if (victim.world.isRemote
+                || !ModConfig.isLoaded()
+                || !(event.getSource().getTrueSource() instanceof EntityPlayer player)) {
             return;
         }
         double chance = ModConfig.get().villages().helpRepChance();
-        if (chance <= 0.0 ||
-            !victim.isCreatureType(EnumCreatureType.MONSTER, false) ||
-            victim.getRNG().nextDouble() >= chance) {
+        if (chance <= 0.0
+                || !victim.isCreatureType(EnumCreatureType.MONSTER, false)
+                || victim.getRNG().nextDouble() >= chance) {
             return;
         }
         BlockPos pos = new BlockPos(victim);

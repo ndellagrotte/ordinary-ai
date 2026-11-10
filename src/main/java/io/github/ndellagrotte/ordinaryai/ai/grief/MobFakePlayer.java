@@ -40,8 +40,7 @@ import java.util.WeakHashMap;
 public final class MobFakePlayer extends FakePlayer {
 
     private static final GameProfile PROFILE = new GameProfile(UUID.fromString("5c1f6f0a-6b0d-4d1e-9a36-0b6f2f7a3c41"),
-        "[OrdinaryAI]"
-    );
+            "[OrdinaryAI]");
     private static final Map<World, MobFakePlayer> BY_WORLD = new WeakHashMap<>();
 
     private @Nullable EntityLiving mob;

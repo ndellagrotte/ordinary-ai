@@ -47,8 +47,7 @@ abstract class EliteTask extends EntityAIBase implements OrdinaryTask {
     static void modifyItem(ItemStack stack, IAttribute attribute, double amount, int operation) {
         String name = attribute.getName();
         stack.addAttributeModifier(name, new AttributeModifier(OrdinaryAI.MOD_ID + ":" + name, amount, operation),
-            EntityLiving.getSlotForItemStack(stack)
-        );
+                EntityLiving.getSlotForItemStack(stack));
     }
 
     /** Creates a named, dyed piece of leather armour. */

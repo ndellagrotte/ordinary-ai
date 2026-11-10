@@ -55,11 +55,11 @@ public final class MountSeekTask extends EntityAIBase implements OrdinaryTask {
     @Override
     public boolean shouldContinueExecuting() {
         EntityLiving target = mount;
-        return !mob.isRiding() &&
-            target != null &&
-            !target.isBeingRidden() &&
-            target.isEntityAlive() &&
-            !mob.getNavigator().noPath();
+        return !mob.isRiding()
+                && target != null
+                && !target.isBeingRidden()
+                && target.isEntityAlive()
+                && !mob.getNavigator().noPath();
     }
 
     @Override
@@ -103,9 +103,8 @@ public final class MountSeekTask extends EntityAIBase implements OrdinaryTask {
     EntityLiving findMount() {
         ConfigSnapshot.Jockeys config = ModConfig.get().jockeys();
         List<EntityLiving> candidates = mob.world.getEntitiesWithinAABB(EntityLiving.class,
-            mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
-            candidate -> candidate != mob && isValidMount(candidate, config)
-        );
+                mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
+                candidate -> candidate != mob && isValidMount(candidate, config));
         return TaskUtil.pickRandom(candidates, mob.getRNG());
     }
 
@@ -119,8 +118,8 @@ public final class MountSeekTask extends EntityAIBase implements OrdinaryTask {
         }
         boolean ridesSmall = small || mob.isChild() || mob instanceof EntitySlime slime && slime.isSmallSlime();
         if (ridesSmall) {
-            return config.mountListSmall().contains(candidate.getClass()) ||
-                candidate.isChild() && config.mountList().contains(candidate.getClass());
+            return config.mountListSmall().contains(candidate.getClass())
+                    || candidate.isChild() && config.mountList().contains(candidate.getClass());
         }
         return !candidate.isChild() && config.mountList().contains(candidate.getClass());
     }

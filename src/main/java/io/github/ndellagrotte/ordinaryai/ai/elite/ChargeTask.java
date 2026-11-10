@@ -51,8 +51,7 @@ final class ChargeTask extends EliteTask {
         Items.LEATHER_HELMET.setColor(helmet, 0xFFFF00);
         mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, helmet);
         modify(mob, SharedMonsterAttributes.KNOCKBACK_RESISTANCE, "Charger knockback resistance",
-            config.chargeKnockbackResistance(), ADD
-        );
+                config.chargeKnockbackResistance(), ADD);
         modify(mob, SharedMonsterAttributes.MAX_HEALTH, "Charger health boost", config.chargeHealthBoost(), ADD);
     }
 
@@ -106,6 +105,13 @@ final class ChargeTask extends EliteTask {
         }
     }
 
+    @Override
+    public void resetTask() {
+        mob.stepHeight = normalStepHeight;
+        mob.setSprinting(false);
+        phase = Phase.IDLE;
+    }
+
     private void windUp() {
         EntityLivingBase target = mob.getAttackTarget();
         if (target == null || !target.isEntityAlive()) {
@@ -135,7 +141,7 @@ final class ChargeTask extends EliteTask {
 
     private void charge() {
         mob.getLookHelper()
-            .setLookPosition(mob.posX + dirX, mob.posY + mob.getEyeHeight(), mob.posZ + dirZ, 100.0F, 100.0F);
+                .setLookPosition(mob.posX + dirX, mob.posY + mob.getEyeHeight(), mob.posZ + dirZ, 100.0F, 100.0F);
         mob.motionX = dirX;
         mob.motionZ = dirZ;
 
@@ -169,13 +175,6 @@ final class ChargeTask extends EliteTask {
     private void end(int cooldownEvaluations) {
         phase = Phase.IDLE;
         readyAt = now() + (long) cooldownEvaluations * TaskUtil.EVALUATION_INTERVAL;
-    }
-
-    @Override
-    public void resetTask() {
-        mob.stepHeight = normalStepHeight;
-        mob.setSprinting(false);
-        phase = Phase.IDLE;
     }
 
     private enum Phase {

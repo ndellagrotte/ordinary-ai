@@ -53,15 +53,6 @@ public final class TaskUtil {
         return hasOrdinaryTask(mob.tasks) || hasOrdinaryTask(mob.targetTasks);
     }
 
-    private static boolean hasOrdinaryTask(EntityAITasks tasks) {
-        for (EntityAITasks.EntityAITaskEntry entry : tasks.taskEntries) {
-            if (entry.action instanceof OrdinaryTask) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /** Returns the mob's task of the given type, or null if it has none. */
     public static <T> @Nullable T findTask(EntityLiving mob, Class<T> type) {
         for (EntityAITasks.EntityAITaskEntry entry : mob.tasks.taskEntries) {
@@ -81,9 +72,9 @@ public final class TaskUtil {
         int lowest = Integer.MIN_VALUE;
         for (EntityAITasks.EntityAITaskEntry entry : mob.tasks.taskEntries) {
             EntityAIBase action = entry.action;
-            if (action instanceof EntityAIWander ||
-                action instanceof EntityAIWatchClosest ||
-                action instanceof EntityAILookIdle) {
+            if (action instanceof EntityAIWander
+                    || action instanceof EntityAIWatchClosest
+                    || action instanceof EntityAILookIdle) {
                 return entry.priority;
             }
             any = true;
@@ -99,8 +90,8 @@ public final class TaskUtil {
 
     /** Returns true if the mob is close enough to the target's feet to grab or strike it. */
     public static boolean isInContact(Entity mob, Entity target) {
-        return mob.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ) <=
-            contactRangeSq(mob, target);
+        return mob.getDistanceSq(target.posX, target.getEntityBoundingBox().minY, target.posZ)
+                <= contactRangeSq(mob, target);
     }
 
     /** Swings both arms. */
@@ -112,6 +103,15 @@ public final class TaskUtil {
     /** Returns a random element, or null if the list is empty. */
     public static <T> @Nullable T pickRandom(List<T> list, Random random) {
         return list.isEmpty() ? null : list.get(random.nextInt(list.size()));
+    }
+
+    private static boolean hasOrdinaryTask(EntityAITasks tasks) {
+        for (EntityAITasks.EntityAITaskEntry entry : tasks.taskEntries) {
+            if (entry.action instanceof OrdinaryTask) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

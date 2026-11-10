@@ -20,23 +20,22 @@ class BlockTargetSyntaxTest {
 
     @Test
     void splitsSimpleLists() {
-        assertThat(BlockTargetSyntax.splitLine("minecraft:torch, minecraft:bed ,minecraft:cake", warnings::add
-        )).containsExactly("minecraft:torch", "minecraft:bed", "minecraft:cake");
+        assertThat(BlockTargetSyntax.splitLine("minecraft:torch, minecraft:bed ,minecraft:cake",
+                warnings::add)).containsExactly("minecraft:torch", "minecraft:bed", "minecraft:cake");
         assertThat(warnings).isEmpty();
     }
 
     @Test
     void keepsCommasInsideBracketsTogether() {
         assertThat(BlockTargetSyntax.splitLine("a:door[half=upper, open=true], a:lever[powered=false],a:tnt",
-            warnings::add
-        )).containsExactly("a:door[half=upper,open=true]", "a:lever[powered=false]", "a:tnt");
+                warnings::add)).containsExactly("a:door[half=upper,open=true]", "a:lever[powered=false]", "a:tnt");
         assertThat(warnings).isEmpty();
     }
 
     @Test
     void dropsAnUnterminatedStateAndSaysSo() {
-        assertThat(BlockTargetSyntax.splitLine("a:tnt, a:door[half=upper, open=true", warnings::add
-        )).containsExactly("a:tnt");
+        assertThat(BlockTargetSyntax.splitLine("a:tnt, a:door[half=upper, open=true",
+                warnings::add)).containsExactly("a:tnt");
         assertThat(warnings).hasSize(1);
     }
 
@@ -49,14 +48,13 @@ class BlockTargetSyntaxTest {
     @Test
     void parsesPlainBlock() {
         assertThat(BlockTargetSyntax.parse(" minecraft:torch ", warnings::add)).isEqualTo(new Target("minecraft:torch",
-            false, List.of()
-        ));
+                false, List.of()));
     }
 
     @Test
     void parsesNamespaceWildcard() {
-        assertThat(BlockTargetSyntax.parse("somemod:*", warnings::add)).isEqualTo(new Target("somemod:", true, List.of()
-        ));
+        assertThat(BlockTargetSyntax.parse("somemod:*", warnings::add)).isEqualTo(new Target("somemod:", true,
+                List.of()));
     }
 
     @Test

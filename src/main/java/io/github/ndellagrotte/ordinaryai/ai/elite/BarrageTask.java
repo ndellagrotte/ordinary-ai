@@ -80,8 +80,7 @@ final class BarrageTask extends EliteTask {
         phase = Phase.AIMING;
         TaskUtil.swingArms(mob);
         mob.world.playSound(null, new BlockPos(mob), SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, mob.getSoundCategory(),
-            1.0F, 1.0F / (mob.getRNG().nextFloat() * 0.4F + 0.8F)
-        );
+                1.0F, 1.0F / (mob.getRNG().nextFloat() * 0.4F + 0.8F));
     }
 
     @Override
@@ -92,6 +91,13 @@ final class BarrageTask extends EliteTask {
         } else if (phase == Phase.SHOOTING) {
             shoot();
         }
+    }
+
+    @Override
+    public void resetTask() {
+        phase = Phase.IDLE;
+        aim = null;
+        readyAt = now() + COOLDOWN;
     }
 
     private void takeAim() {
@@ -120,9 +126,8 @@ final class BarrageTask extends EliteTask {
             return;
         }
         mob.getLookHelper()
-            .setLookPosition(mob.posX + direction.x, mob.posY + mob.getEyeHeight(), mob.posZ + direction.z, 100.0F,
-                100.0F
-            );
+                .setLookPosition(mob.posX + direction.x, mob.posY + mob.getEyeHeight(), mob.posZ + direction.z, 100.0F,
+                        100.0F);
         if (timer < 0) {
             phase = Phase.IDLE;
         } else if (timer % 5 == 0) {
@@ -134,17 +139,9 @@ final class BarrageTask extends EliteTask {
                 arrow.setFire(100);
             }
             mob.world.playSound(null, new BlockPos(mob), SoundEvents.ENTITY_ARROW_SHOOT, mob.getSoundCategory(), 1.0F,
-                1.0F / (mob.getRNG().nextFloat() * 0.4F + 0.8F)
-            );
+                    1.0F / (mob.getRNG().nextFloat() * 0.4F + 0.8F));
             mob.world.spawnEntity(arrow);
         }
-    }
-
-    @Override
-    public void resetTask() {
-        phase = Phase.IDLE;
-        aim = null;
-        readyAt = now() + COOLDOWN;
     }
 
     private enum Phase {

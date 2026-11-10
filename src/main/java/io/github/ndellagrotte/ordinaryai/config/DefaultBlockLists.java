@@ -51,17 +51,15 @@ import java.util.function.Predicate;
  * Must be built after all blocks are registered.
  */
 record DefaultBlockLists(String[] doors,
-    String[] fiddleTargets,
-    String[] griefTargets,
-    String[] griefLootable,
-    String[] villageBlacklist
-) {
+        String[] fiddleTargets,
+        String[] griefTargets,
+        String[] griefLootable,
+        String[] villageBlacklist) {
 
     static DefaultBlockLists scanRegistry() {
         return new DefaultBlockLists(collect(DefaultBlockLists::isDoor), collect(DefaultBlockLists::isFiddleTarget),
-            collect(DefaultBlockLists::isGriefTarget), collect(block -> block instanceof BlockChest),
-            collect(DefaultBlockLists::isIgnoredByVillagers)
-        );
+                collect(DefaultBlockLists::isGriefTarget), collect(block -> block instanceof BlockChest),
+                collect(DefaultBlockLists::isIgnoredByVillagers));
     }
 
     private static String[] collect(Predicate<Block> filter) {
@@ -90,29 +88,29 @@ record DefaultBlockLists(String[] doors,
     }
 
     private static boolean isGriefTarget(Block block) {
-        return block instanceof BlockBed ||
-            block instanceof BlockWorkbench ||
-            block instanceof BlockFurnace ||
-            block instanceof BlockEnchantmentTable ||
-            block instanceof BlockBrewingStand ||
-            block instanceof BlockLadder ||
-            block == Blocks.FARMLAND ||
-            block == Blocks.GOLDEN_RAIL;
+        return block instanceof BlockBed
+                || block instanceof BlockWorkbench
+                || block instanceof BlockFurnace
+                || block instanceof BlockEnchantmentTable
+                || block instanceof BlockBrewingStand
+                || block instanceof BlockLadder
+                || block == Blocks.FARMLAND
+                || block == Blocks.GOLDEN_RAIL;
     }
 
     private static boolean isIgnoredByVillagers(Block block) {
         // Natural blocks
-        if (block instanceof BlockGrass ||
-            block instanceof BlockMycelium ||
-            block instanceof BlockStone ||
-            block instanceof BlockDirt ||
-            block instanceof BlockSand ||
-            block instanceof BlockPumpkin ||
-            block instanceof BlockMelon ||
-            block instanceof BlockHugeMushroom ||
-            block instanceof BlockSnow ||
-            block instanceof BlockIce ||
-            block instanceof BlockPackedIce) {
+        if (block instanceof BlockGrass
+                || block instanceof BlockMycelium
+                || block instanceof BlockStone
+                || block instanceof BlockDirt
+                || block instanceof BlockSand
+                || block instanceof BlockPumpkin
+                || block instanceof BlockMelon
+                || block instanceof BlockHugeMushroom
+                || block instanceof BlockSnow
+                || block instanceof BlockIce
+                || block instanceof BlockPackedIce) {
             return true;
         }
         // Plants
@@ -120,10 +118,10 @@ record DefaultBlockLists(String[] doors,
             return true;
         }
         // Utility blocks, and doors (reputation for houses is handled separately)
-        if (block instanceof BlockRailBase ||
-            block instanceof BlockShulkerBox ||
-            block instanceof BlockDoor ||
-            block instanceof BlockFenceGate) {
+        if (block instanceof BlockRailBase
+                || block instanceof BlockShulkerBox
+                || block instanceof BlockDoor
+                || block instanceof BlockFenceGate) {
             return true;
         }
         return isTrivial(block);
@@ -133,8 +131,8 @@ record DefaultBlockLists(String[] doors,
     @SuppressWarnings("deprecation")
     private static boolean isTrivial(Block block) {
         try {
-            return block.getDefaultState().getBlockHardness(null, BlockPos.ORIGIN) == 0.0F &&
-                block.getDefaultState().getLightValue() < 4;
+            return block.getDefaultState().getBlockHardness(null, BlockPos.ORIGIN) == 0.0F
+                    && block.getDefaultState().getLightValue() < 4;
         } catch (RuntimeException _) {
             // Some blocks need a real world to answer; leave those off the list
             return false;

@@ -46,8 +46,7 @@ public final class Reputation {
      * @param roll             source of rolls from 0 (inclusive) to 1 (exclusive)
      */
     public static BreakOutcome onBlockBroken(int reputation, int repLossLimit, double repLossChance,
-        int aggressionLimit, double aggressionChance, DoubleSupplier roll
-    ) {
+            int aggressionLimit, double aggressionChance, DoubleSupplier roll) {
         boolean loseReputation = reputation <= repLossLimit && roll.getAsDouble() < repLossChance;
         boolean becomeAggressor;
         if (reputation <= HATED) {

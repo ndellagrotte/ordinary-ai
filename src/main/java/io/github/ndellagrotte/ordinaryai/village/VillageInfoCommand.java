@@ -55,17 +55,15 @@ public final class VillageInfoCommand extends CommandBase {
         String lowersBy = "Your reputation can lower by:";
         return switch (standing) {
             case HATED ->
-                new String[] {
-                    lowersBy,
-                    " Hurting villagers, Destroying homes, Breaking blocks",
-                    " Village guards may attack on sight"
-                };
+                    new String[] {
+                            lowersBy, " Hurting villagers, Destroying homes, Breaking blocks",
+                            " Village guards may attack on sight"
+                    };
             case DISLIKED ->
-                new String[] {
-                    lowersBy,
-                    " Hurting villagers, Destroying homes, Breaking blocks",
-                    " Breaking blocks may anger village guards"
-                };
+                    new String[] {
+                            lowersBy, " Hurting villagers, Destroying homes, Breaking blocks",
+                            " Breaking blocks may anger village guards"
+                    };
             case NEUTRAL -> new String[] { lowersBy, " Hurting villagers, Destroying homes, Breaking blocks" };
             case TRUSTED -> new String[] { lowersBy, " Hurting villagers, Destroying homes" };
         };
@@ -101,12 +99,10 @@ public final class VillageInfoCommand extends CommandBase {
         int houses = village.getNumVillageDoors();
         int population = village.getNumVillagers();
         int golems = player.world
-            .getEntitiesWithinAABB(EntityIronGolem.class,
-                new AxisAlignedBB(center.getX() - radius, center.getY() - 4, center.getZ() - radius,
-                    center.getX() + radius, center.getY() + 4, center.getZ() + radius
-                )
-            )
-            .size();
+                .getEntitiesWithinAABB(EntityIronGolem.class,
+                        new AxisAlignedBB(center.getX() - radius, center.getY() - 4, center.getZ() - radius,
+                                center.getX() + radius, center.getY() + 4, center.getZ() + radius))
+                .size();
         // Vanilla's own limits: one villager per 0.35 doors, one golem per ten villagers once there are 21 doors
         int maxPopulation = (int) (houses * 0.35);
         int maxGolems = houses > 20 ? population / 10 : 0;
@@ -119,8 +115,7 @@ public final class VillageInfoCommand extends CommandBase {
         say(sender, "Population: " + population + " / " + maxPopulation + ",  Golems: " + golems + " / " + maxGolems);
 
         Reputation.Standing standing = Reputation.standing(reputation, config.blockAggressionLimit(),
-            config.blockRepLossLimit()
-        );
+                config.blockRepLossLimit());
         ITextComponent line = new TextComponentString("Reputation: " + reputation + " (");
         ITextComponent label = new TextComponentString(label(standing));
         label.getStyle().setColor(color(standing));

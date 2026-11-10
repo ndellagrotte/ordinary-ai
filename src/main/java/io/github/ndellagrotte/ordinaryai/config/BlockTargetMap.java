@@ -98,8 +98,7 @@ public final class BlockTargetMap {
     }
 
     private static void merge(Reference2ObjectOpenHashMap<Block, List<StateMatcher>> building, Block block,
-        StateMatcher matcher, String line, Consumer<String> warn
-    ) {
+            StateMatcher matcher, String line, Consumer<String> warn) {
         List<StateMatcher> current = building.get(block);
         if (current == null) {
             current = new ArrayList<>(1);
@@ -148,16 +147,14 @@ public final class BlockTargetMap {
             for (BlockTargetSyntax.Condition condition : conditions) {
                 IProperty<?> property = block.getBlockState().getProperty(condition.property());
                 if (property == null) {
-                    warn.accept("Invalid block property key '" + condition.property() + "' for block '" +
-                            block.getRegistryName() + "'"
-                    );
+                    warn.accept("Invalid block property key '" + condition.property() + "' for block '"
+                                    + block.getRegistryName() + "'");
                     continue;
                 }
                 Optional<? extends Comparable<?>> value = property.parseValue(condition.value());
                 if (value == null || !value.isPresent()) {
-                    warn.accept("Invalid block property value '" + condition.value() + "' for property key '" +
-                            condition.property() + "' and block '" + block.getRegistryName() + "'"
-                    );
+                    warn.accept("Invalid block property value '" + condition.value() + "' for property key '"
+                                    + condition.property() + "' and block '" + block.getRegistryName() + "'");
                     continue;
                 }
                 properties.add(property);

@@ -124,8 +124,8 @@ public final class AiInjector {
         boolean hasMelee = false;
 
         if (!MobData.hasNumber(tag, MobData.DEFEND_VILLAGE)) {
-            tag.setBoolean(MobData.DEFEND_VILLAGE, config.villages().villagersDefend() && mob instanceof EntityVillager
-            );
+            tag.setBoolean(MobData.DEFEND_VILLAGE,
+                    config.villages().villagersDefend() && mob instanceof EntityVillager);
         }
         if (tag.getBoolean(MobData.DEFEND_VILLAGE)) {
             mob.tasks.addTask(0, new PassiveMeleeTask(mob, 0.7, false));
@@ -202,14 +202,12 @@ public final class AiInjector {
         if (!(mob.getNavigator() instanceof PathNavigateGround navigator)) {
             if (config.general().debugMode()) {
                 OrdinaryAI.LOGGER.info("Skipping door-breaking AI for '{}': it does not walk on the ground",
-                    EntityList.getKey(mob)
-                );
+                        EntityList.getKey(mob));
             }
             return;
         }
         // Replace the vanilla task rather than run alongside it
-        EntityAITasks.EntityAITaskEntry[] entries = mob.tasks.taskEntries.toArray(new EntityAITasks.EntityAITaskEntry[0]
-        );
+        EntityAITasks.EntityAITaskEntry[] entries = mob.tasks.taskEntries.toArray(new EntityAITasks.EntityAITaskEntry[0]);
         for (EntityAITasks.EntityAITaskEntry entry : entries) {
             if (entry.action instanceof EntityAIBreakDoor) {
                 mob.tasks.removeTask(entry.action);
@@ -247,15 +245,13 @@ public final class AiInjector {
         }
         double range = mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
         AxisAlignedBB area = new AxisAlignedBB(mob.posX, mob.posY, mob.posZ, mob.posX + 1.0, mob.posY + 1.0,
-            mob.posZ + 1.0
-        ).grow(range, 10.0, range);
+                mob.posZ + 1.0).grow(range, 10.0, range);
         Class<?> type = mob.getClass();
         List<EntityLiving> allies = mob.world.getEntitiesWithinAABB(EntityLiving.class, area,
-            ally -> ally != mob &&
-                ally.getAttackTarget() == null &&
-                (ally.getClass().isAssignableFrom(type) || type.isAssignableFrom(ally.getClass())) &&
-                !ally.isOnSameTeam(attacker)
-        );
+                ally -> ally != mob
+                        && ally.getAttackTarget() == null
+                        && (ally.getClass().isAssignableFrom(type) || type.isAssignableFrom(ally.getClass()))
+                        && !ally.isOnSameTeam(attacker));
         for (EntityLiving ally : allies) {
             ally.setAttackTarget(attacker);
         }
@@ -316,8 +312,8 @@ public final class AiInjector {
             }
         }
         if (ModConfig.isLoaded()) {
-            callForHelpOnDeath(mob, event.getSource().getTrueSource(), ModConfig.get().reactions().callForHelpOnDeath()
-            );
+            callForHelpOnDeath(mob, event.getSource().getTrueSource(),
+                    ModConfig.get().reactions().callForHelpOnDeath());
         }
     }
 
@@ -331,8 +327,8 @@ public final class AiInjector {
     }
 
     /** Makes a normally passive mob attack players on sight. */
-    private static final class HuntPlayersTask extends EntityAINearestAttackableTarget<
-            EntityPlayer> implements OrdinaryTask {
+    private static final class HuntPlayersTask extends EntityAINearestAttackableTarget<EntityPlayer>
+            implements OrdinaryTask {
 
         HuntPlayersTask(EntityCreature mob) {
             super(mob, EntityPlayer.class, true);

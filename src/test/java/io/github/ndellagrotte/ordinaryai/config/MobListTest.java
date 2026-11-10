@@ -17,14 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MobListTest {
 
     private static final Map<String, Class<?>> IDS = Map.of("animal", Animal.class, "dog", Dog.class, "puppy",
-        Puppy.class, "cat", Cat.class
-    );
+            Puppy.class, "cat", Cat.class);
 
     private final List<String> warnings = new ArrayList<>();
-
-    private MobList parse(String... lines) {
-        return MobList.parse(lines, IDS::get, warnings::add);
-    }
 
     @Test
     void matchesSubclassesUnlessMarkedExact() {
@@ -102,6 +97,10 @@ class MobListTest {
         MobList list = parse();
         assertThat(list.isEmpty()).isTrue();
         assertThat(list.contains(Dog.class)).isFalse();
+    }
+
+    private MobList parse(String... lines) {
+        return MobList.parse(lines, IDS::get, warnings::add);
     }
 
     private static class Animal { }

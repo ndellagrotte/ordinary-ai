@@ -42,8 +42,8 @@ final class ThiefTask extends EliteTask {
     ThiefTask(EntityLiving mob, NBTTagCompound eliteTag) {
         super(mob, TaskUtil.MUTEX_MOVEMENT | TaskUtil.MUTEX_FACING);
         avoidPlayers = mob instanceof EntityCreature creature
-            ? new EntityAIAvoidEntity<>(creature, EntityPlayer.class, eliteTag.getFloat(KEY), 1.0, SPEED)
-            : null;
+                ? new EntityAIAvoidEntity<>(creature, EntityPlayer.class, eliteTag.getFloat(KEY), 1.0, SPEED)
+                : null;
     }
 
     static void writeDefault(String key, NBTTagCompound eliteTag, ConfigSnapshot.Elite config) {
@@ -69,10 +69,6 @@ final class ThiefTask extends EliteTask {
         return false;
     }
 
-    private boolean isEmptyHanded() {
-        return mob.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND).isEmpty();
-    }
-
     @Override
     public boolean shouldExecute() {
         EntityLivingBase target = mob.getAttackTarget();
@@ -81,9 +77,9 @@ final class ThiefTask extends EliteTask {
             return hasItems(player);
         }
         // Having got what it came for, it only turns to fight a target that is already badly hurt
-        boolean playerNearby = avoidPlayers != null &&
-            (target == null || target.getHealth() > target.getMaxHealth() / 3.0F) &&
-            avoidPlayers.shouldExecute();
+        boolean playerNearby = avoidPlayers != null
+                && (target == null || target.getHealth() > target.getMaxHealth() / 3.0F)
+                && avoidPlayers.shouldExecute();
         // With nothing in hand and something else to attack, it goes for that instead of running
         fleeing = playerNearby && (target == null || !isEmptyHanded());
         return playerNearby;
@@ -138,6 +134,10 @@ final class ThiefTask extends EliteTask {
             avoidPlayers.resetTask();
         }
         fleeing = false;
+    }
+
+    private boolean isEmptyHanded() {
+        return mob.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND).isEmpty();
     }
 
     private void pocket(ItemStack loot) {
