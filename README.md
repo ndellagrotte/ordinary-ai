@@ -29,15 +29,16 @@ thief.
 
 ## Configuration
 
-Options live in `config/ordinaryai.cfg`, which is written with defaults and a description of every option on first
-run. They can also be edited in game from the mod list. On a dedicated server, `/ordinaryai reload` (operators
+Options live in `config/specialai.cfg`, which is written with defaults and a description of every option on first
+run. They can also be edited in game from the mod list. On a dedicated server, `/specialai reload` (operators
 only) re-reads the file.
 
 Default block lists are worked out from the blocks that are actually registered, so doors, chests and the like
 from other mods are included when the file is first written.
 
-**Coming from Special AI:** if `config/Special_AI.cfg` exists and `config/ordinaryai.cfg` does not, the old file
-is copied across unchanged. Mobs in existing worlds keep the AI they had.
+**Coming from Special AI:** if `config/Special_AI.cfg` exists and `config/specialai.cfg` does not, the old file
+is copied across unchanged. Mobs in existing worlds keep the AI they had. Ordinary AI keeps Special AI's mod id,
+`specialai`, so remove the Special AI jar; the two cannot be installed together.
 
 ### Mob lists
 
@@ -65,7 +66,7 @@ those tags yourself overrides the roll, for example:
 ## Commands
 
 - `/villageinfo` tells a player about the village they are standing in and their reputation there.
-- `/ordinaryai reload` re-reads the config file. Operators only.
+- `/specialai reload` re-reads the config file. Operators only.
 
 ## Building
 

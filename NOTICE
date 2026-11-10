@@ -16,9 +16,10 @@ wording). This port is licensed accordingly.
 
 What was changed
 ----------------
-The code was rewritten for the Cleanroom loader under a new mod id and package. Behaviour follows Special AI 1.1.0
-except where listed in src/main/resources/changelog.txt. The villager name syllables and job titles, the config
-option names and their descriptions, and the design of every AI pattern are Father Toast's work.
+The code was rewritten for the Cleanroom loader under a new name and package, keeping the mod id "specialai".
+Behaviour follows Special AI 1.1.0 except where listed in src/main/resources/changelog.txt. The villager name
+syllables and job titles, the config option names and their descriptions, and the design of every AI pattern are
+Father Toast's work.
 
 The build template is CleanroomMC's CleanroomModTemplate. Its build scripts and style configuration files remain
 under their own terms.

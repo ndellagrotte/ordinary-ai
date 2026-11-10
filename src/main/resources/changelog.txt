@@ -1,3 +1,9 @@
+Ordinary AI 2.0.1
+    - The mod id is "specialai" again, as in Special AI. Mods and packs that look for Special AI by its id find
+      this mod.
+    - Coming from 0.0.1: rename config/ordinaryai.cfg to config/specialai.cfg to keep your settings. The reload
+      command is now "/specialai reload".
+
 Ordinary AI 0.0.1
     A port of Special AI 1.1.0 to the Cleanroom loader. Same features and options, under a new name.
     - Moving over from Special AI:

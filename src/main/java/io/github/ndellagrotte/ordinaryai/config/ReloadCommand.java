@@ -20,7 +20,7 @@ import net.minecraft.util.text.TextComponentString;
 import java.util.Collections;
 import java.util.List;
 
-/** {@code /ordinaryai reload}: re-reads the config file without restarting. For operators. */
+/** {@code /specialai reload}: re-reads the config file without restarting. For operators. */
 public final class ReloadCommand extends CommandBase {
 
     private static final String USAGE = "/" + OrdinaryAI.MOD_ID + " reload";
