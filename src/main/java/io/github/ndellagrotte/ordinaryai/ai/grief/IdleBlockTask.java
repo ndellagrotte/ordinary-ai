@@ -132,51 +132,6 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
         return scan(config, mayGrief, mayFiddle);
     }
 
-    /** Samples random nearby blocks, without loading chunks, until one is worth targeting or the allowance runs out. */
-    private boolean scan(ConfigSnapshot config, boolean mayGrief, boolean mayFiddle) {
-        ConfigSnapshot.IdleActivities idle = config.idle();
-        int range = rangeOverride > 0 ? rangeOverride : idle.range();
-        int rangeVertical = rangeVerticalOverride > 0 ? rangeVerticalOverride : idle.rangeVertical();
-        int originX = (int) Math.floor(mob.posX);
-        int originY = (int) Math.floor(mob.posY);
-        int originZ = (int) Math.floor(mob.posZ);
-
-        World world = mob.world;
-        IChunkProvider chunks = world.getChunkProvider();
-        Chunk chunk = null;
-        boolean chunkKnown = false;
-        int chunkX = 0;
-        int chunkZ = 0;
-
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        for (int i = 0; i < idle.scanCount() && ScanBudget.tryTake(idle.scanCountGlobal()); i++) {
-            pos.setPos(originX + random.nextInt(range) - random.nextInt(range),
-                originY + random.nextInt(rangeVertical) - random.nextInt(rangeVertical),
-                originZ + random.nextInt(range) - random.nextInt(range)
-            );
-            if (world.isOutsideBuildHeight(pos)) {
-                continue;
-            }
-            int x = pos.getX() >> 4;
-            int z = pos.getZ() >> 4;
-            if (!chunkKnown || x != chunkX || z != chunkZ) {
-                chunk = chunks.getLoadedChunk(x, z);
-                chunkKnown = true;
-                chunkX = x;
-                chunkZ = z;
-            }
-            if (chunk == null) {
-                continue;
-            }
-            IBlockState state = chunk.getBlockState(pos);
-            if (mayGrief && tryTargetForGriefing(config, state, pos) ||
-                mayFiddle && tryTargetForFiddling(config, state, pos)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean shouldContinueExecuting() {
         BlockPos pos = targetPos;
@@ -225,6 +180,72 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
         clearBreakProgress();
     }
 
+    @Override
+    public void updateTask() {
+        BlockPos pos = targetPos;
+        IBlockState state = targetState;
+        if (activity == Activity.NONE || pos == null || state == null) {
+            return;
+        }
+        mob.getLookHelper().setLookPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 30.0F, 30.0F);
+
+        if (!canSee) {
+            approach();
+        } else if (!isWithinReach(pos)) {
+            // Pushed or carried away from the block; start over rather than keep working from afar
+            mob.getNavigator().clearPath();
+            finish();
+        } else if (activity == Activity.GRIEFING) {
+            grief(pos, state);
+        } else {
+            fiddle(pos, state);
+        }
+    }
+
+    /** Samples random nearby blocks, without loading chunks, until one is worth targeting or the allowance runs out. */
+    private boolean scan(ConfigSnapshot config, boolean mayGrief, boolean mayFiddle) {
+        ConfigSnapshot.IdleActivities idle = config.idle();
+        int range = rangeOverride > 0 ? rangeOverride : idle.range();
+        int rangeVertical = rangeVerticalOverride > 0 ? rangeVerticalOverride : idle.rangeVertical();
+        int originX = (int) Math.floor(mob.posX);
+        int originY = (int) Math.floor(mob.posY);
+        int originZ = (int) Math.floor(mob.posZ);
+
+        World world = mob.world;
+        IChunkProvider chunks = world.getChunkProvider();
+        Chunk chunk = null;
+        boolean chunkKnown = false;
+        int chunkX = 0;
+        int chunkZ = 0;
+
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int i = 0; i < idle.scanCount() && ScanBudget.tryTake(idle.scanCountGlobal()); i++) {
+            pos.setPos(originX + random.nextInt(range) - random.nextInt(range),
+                    originY + random.nextInt(rangeVertical) - random.nextInt(rangeVertical),
+                    originZ + random.nextInt(range) - random.nextInt(range));
+            if (world.isOutsideBuildHeight(pos)) {
+                continue;
+            }
+            int x = pos.getX() >> 4;
+            int z = pos.getZ() >> 4;
+            if (!chunkKnown || x != chunkX || z != chunkZ) {
+                chunk = chunks.getLoadedChunk(x, z);
+                chunkKnown = true;
+                chunkX = x;
+                chunkZ = z;
+            }
+            if (chunk == null) {
+                continue;
+            }
+            IBlockState state = chunk.getBlockState(pos);
+            if (mayGrief && tryTargetForGriefing(config, state, pos)
+                    || mayFiddle && tryTargetForFiddling(config, state, pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Ends the current activity, undoing anything it left in the world. Safe to call more than once. */
     private void finish() {
         if (activity != Activity.NONE) {
@@ -249,28 +270,6 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
             mob.world.sendBlockBreakProgress(mob.getEntityId(), targetPos, BlockBreaking.NO_PROGRESS);
         }
         lastProgress = BlockBreaking.NO_PROGRESS;
-    }
-
-    @Override
-    public void updateTask() {
-        BlockPos pos = targetPos;
-        IBlockState state = targetState;
-        if (activity == Activity.NONE || pos == null || state == null) {
-            return;
-        }
-        mob.getLookHelper().setLookPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 30.0F, 30.0F);
-
-        if (!canSee) {
-            approach();
-        } else if (!isWithinReach(pos)) {
-            // Pushed or carried away from the block; start over rather than keep working from afar
-            mob.getNavigator().clearPath();
-            finish();
-        } else if (activity == Activity.GRIEFING) {
-            grief(pos, state);
-        } else {
-            fiddle(pos, state);
-        }
     }
 
     private void approach() {
@@ -315,8 +314,7 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
             mob.swingArm(EnumHand.MAIN_HAND);
             SoundType sound = state.getBlock().getSoundType(state, world, pos, mob);
             world.playSound(null, pos, sound.getBreakSound(), mob.getSoundCategory(), sound.getVolume(),
-                sound.getPitch() * 0.8F
-            );
+                    sound.getPitch() * 0.8F);
         }
         if (++hitCounter >= 5) {
             hitCounter = 0;
@@ -365,8 +363,7 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
     private void use(WorldServer world, BlockPos pos, IBlockState state, MobFakePlayer player) {
         // Give protection mods the same chance to refuse that they get for a real player
         PlayerInteractEvent.RightClickBlock click = ForgeHooks.onRightClickBlock(player, EnumHand.MAIN_HAND, pos,
-            EnumFacing.DOWN, new Vec3d(0.5, 0.5, 0.5)
-        );
+                EnumFacing.DOWN, new Vec3d(0.5, 0.5, 0.5));
         if (click.isCanceled() || click.getUseBlock() == Event.Result.DENY) {
             return;
         }
@@ -375,14 +372,14 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
         } else {
             state.getBlock()
-                .onBlockActivated(world, pos, state, player, EnumHand.MAIN_HAND, EnumFacing.DOWN, 0.5F, 0.5F, 0.5F);
+                    .onBlockActivated(world, pos, state, player, EnumHand.MAIN_HAND, EnumFacing.DOWN, 0.5F, 0.5F, 0.5F);
         }
     }
 
     private boolean isWithinReach(BlockPos pos) {
         double limit = ModConfig.get().idle().reach() + REACH_MARGIN;
-        return mob.getDistanceSq(pos.getX() + 0.5, pos.getY() + 0.5 - mob.getEyeHeight(), pos.getZ() + 0.5) <=
-            limit * limit;
+        return mob.getDistanceSq(pos.getX() + 0.5, pos.getY() + 0.5 - mob.getEyeHeight(), pos.getZ() + 0.5)
+                <= limit * limit;
     }
 
     /**
@@ -404,9 +401,9 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
         }
         // Aim at the three faces of the block that are turned towards the mob
         Vec3d eyes = new Vec3d(mob.posX, mob.posY + mob.getEyeHeight(), mob.posZ);
-        if (hasClearLine(eyes, x, y + (mob.posY > y ? 0.5 : -0.5), z) ||
-            hasClearLine(eyes, x + (mob.posX > x ? 0.5 : -0.5), y, z) ||
-            hasClearLine(eyes, x, y, z + (mob.posZ > z ? 0.5 : -0.5))) {
+        if (hasClearLine(eyes, x, y + (mob.posY > y ? 0.5 : -0.5), z)
+                || hasClearLine(eyes, x + (mob.posX > x ? 0.5 : -0.5), y, z)
+                || hasClearLine(eyes, x, y, z + (mob.posZ > z ? 0.5 : -0.5))) {
             canSee = true;
         }
         return true;
@@ -424,8 +421,8 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
         // Something is in the way. If it is also worth acting on, switch to it.
         ConfigSnapshot config = ModConfig.get();
         IBlockState blocking = mob.world.getBlockState(hitPos);
-        return activity == Activity.GRIEFING && tryTargetForGriefing(config, blocking, hitPos) ||
-            activity == Activity.FIDDLING && tryTargetForFiddling(config, blocking, hitPos);
+        return activity == Activity.GRIEFING && tryTargetForGriefing(config, blocking, hitPos)
+                || activity == Activity.FIDDLING && tryTargetForFiddling(config, blocking, hitPos);
     }
 
     private boolean tryTargetForGriefing(ConfigSnapshot config, IBlockState state, BlockPos pos) {
@@ -439,8 +436,8 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
     private boolean tryTargetForFiddling(ConfigSnapshot config, IBlockState state, BlockPos pos) {
         ConfigSnapshot.Fiddling fiddling = config.fiddling();
         BlockTargetMap blacklist = fiddleBlacklistOverride != null
-            ? fiddleBlacklistOverride
-            : fiddling.targetBlacklist();
+                ? fiddleBlacklistOverride
+                : fiddling.targetBlacklist();
         BlockTargetMap targets = fiddleTargetsOverride != null ? fiddleTargetsOverride : fiddling.targetBlocks();
         if (state.getBlock() == Blocks.AIR || blacklist.matches(state) || !targets.matches(state)) {
             return false;
@@ -468,9 +465,9 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
         BlockTargetMap targets = griefTargetsOverride != null ? griefTargetsOverride : config.targetBlocks();
         BlockTargetMap lootable = griefLootableOverride != null ? griefLootableOverride : config.targetLootable();
         boolean breakLights = breakLightsOverride != null ? breakLightsOverride : config.breakLights();
-        if (!(breakLights && isUnnaturalLight(state, pos) ||
-            targets.matches(state) ||
-            lootable.matches(state) && isLootedContainer(pos))) {
+        if (!(breakLights && isUnnaturalLight(state, pos)
+                || targets.matches(state)
+                || lootable.matches(state) && isLootedContainer(pos))) {
             return false;
         }
         boolean needsTool = needsToolOverride != null ? needsToolOverride : config.requiresTools();
@@ -478,11 +475,11 @@ public final class IdleBlockTask extends EntityAIBase implements OrdinaryTask {
     }
 
     private boolean isUnnaturalLight(IBlockState state, BlockPos pos) {
-        return state.getLightValue(mob.world, pos) > 1 &&
-            !(state.getBlock() instanceof BlockFire) &&
-            state.getBlock() != Blocks.LIT_REDSTONE_ORE &&
-            !(state.getBlock() instanceof BlockOre) &&
-            state.getBlock() != Blocks.MAGMA;
+        return state.getLightValue(mob.world, pos) > 1
+                && !(state.getBlock() instanceof BlockFire)
+                && state.getBlock() != Blocks.LIT_REDSTONE_ORE
+                && !(state.getBlock() instanceof BlockOre)
+                && state.getBlock() != Blocks.MAGMA;
     }
 
     /** Containers that still hold an unrolled loot table are left alone, so dungeon chests survive until opened. */

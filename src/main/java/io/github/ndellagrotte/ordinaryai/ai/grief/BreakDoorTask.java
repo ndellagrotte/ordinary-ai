@@ -61,8 +61,8 @@ public final class BreakDoorTask extends EntityAIBreakDoor implements OrdinaryTa
         needsTargetOverride = tag.hasKey(MobData.DOOR_NEEDS_TARGET) ? tag.getBoolean(MobData.DOOR_NEEDS_TARGET) : null;
         needsToolOverride = tag.hasKey(MobData.DOOR_NEEDS_TOOL) ? tag.getBoolean(MobData.DOOR_NEEDS_TOOL) : null;
         targetsOverride = tag.hasKey(MobData.DOOR_BLOCKS)
-            ? BlockTargetMap.parseLine(tag.getString(MobData.DOOR_BLOCKS), OrdinaryAI.LOGGER::warn)
-            : null;
+                ? BlockTargetMap.parseLine(tag.getString(MobData.DOOR_BLOCKS), OrdinaryAI.LOGGER::warn)
+                : null;
     }
 
     @Override
@@ -79,49 +79,6 @@ public final class BreakDoorTask extends EntityAIBreakDoor implements OrdinaryTa
             return false;
         }
         return ForgeEventFactory.getMobGriefingEvent(entity.world, entity) && findObstructingDoor(config);
-    }
-
-    private boolean findObstructingDoor(ConfigSnapshot.DoorBreaking config) {
-        // Another mod may have swapped the navigator since this task was added
-        if (!(entity.getNavigator() instanceof PathNavigateGround navigator)) {
-            return false;
-        }
-        Path path = navigator.getPath();
-        if (path == null || path.isFinished() || !navigator.getEnterDoors()) {
-            return false;
-        }
-        int lastPoint = Math.min(path.getCurrentPathIndex() + 2, path.getCurrentPathLength());
-        for (int i = 0; i < lastPoint; i++) {
-            PathPoint point = path.getPathPointFromIndex(i);
-            double dx = point.x - entity.posX;
-            double dz = point.z - entity.posZ;
-            if (dx * dx + dz * dz <= 2.25 && tryTargetDoor(config, new BlockPos(point.x, point.y, point.z))) {
-                return true;
-            }
-        }
-        return tryTargetDoor(config, new BlockPos(entity));
-    }
-
-    /** Targets the highest matching block in the column the mob's body would occupy at the given footing. */
-    private boolean tryTargetDoor(ConfigSnapshot.DoorBreaking config, BlockPos footPos) {
-        BlockTargetMap targets = targetsOverride != null ? targetsOverride : config.targetBlocks();
-        boolean needsTool = (needsToolOverride != null ? needsToolOverride : config.requiresTools()) &&
-            !isMadCreeper(config);
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(footPos.getX(),
-            footPos.getY() - 1 + (int) Math.ceil(entity.height), footPos.getZ()
-        );
-        while (pos.getY() >= footPos.getY()) {
-            if (entity.world.isBlockLoaded(pos)) {
-                IBlockState state = entity.world.getBlockState(pos);
-                if (targets.matches(state) && BlockBreaking.mayDestroy(state, entity, needsTool, entity.world, pos)) {
-                    targetState = state;
-                    doorPosition = pos.toImmutable();
-                    return true;
-                }
-            }
-            pos.setY(pos.getY() - 1);
-        }
-        return false;
     }
 
     @Override
@@ -156,13 +113,6 @@ public final class BreakDoorTask extends EntityAIBreakDoor implements OrdinaryTa
         clearBreakProgress();
     }
 
-    private void clearBreakProgress() {
-        if (lastProgress != BlockBreaking.NO_PROGRESS) {
-            entity.world.sendBlockBreakProgress(entity.getEntityId(), doorPosition, BlockBreaking.NO_PROGRESS);
-            lastProgress = BlockBreaking.NO_PROGRESS;
-        }
-    }
-
     @Override
     public void updateTask() {
         IBlockState state = targetState;
@@ -180,8 +130,7 @@ public final class BreakDoorTask extends EntityAIBreakDoor implements OrdinaryTa
             entity.swingArm(EnumHand.MAIN_HAND);
             boolean metal = state.getMaterial() == Material.IRON || state.getMaterial() == Material.ANVIL;
             entity.world.playEvent(metal ? BlockBreaking.EVENT_ATTACK_DOOR_IRON : BlockBreaking.EVENT_ATTACK_DOOR_WOOD,
-                doorPosition, 0
-            );
+                    doorPosition, 0);
         }
         if (++hitCounter >= 16) {
             hitCounter = 0;
@@ -202,6 +151,55 @@ public final class BreakDoorTask extends EntityAIBreakDoor implements OrdinaryTa
         if (progress != lastProgress) {
             entity.world.sendBlockBreakProgress(entity.getEntityId(), doorPosition, progress);
             lastProgress = progress;
+        }
+    }
+
+    private boolean findObstructingDoor(ConfigSnapshot.DoorBreaking config) {
+        // Another mod may have swapped the navigator since this task was added
+        if (!(entity.getNavigator() instanceof PathNavigateGround navigator)) {
+            return false;
+        }
+        Path path = navigator.getPath();
+        if (path == null || path.isFinished() || !navigator.getEnterDoors()) {
+            return false;
+        }
+        int lastPoint = Math.min(path.getCurrentPathIndex() + 2, path.getCurrentPathLength());
+        for (int i = 0; i < lastPoint; i++) {
+            PathPoint point = path.getPathPointFromIndex(i);
+            double dx = point.x - entity.posX;
+            double dz = point.z - entity.posZ;
+            if (dx * dx + dz * dz <= 2.25 && tryTargetDoor(config, new BlockPos(point.x, point.y, point.z))) {
+                return true;
+            }
+        }
+        return tryTargetDoor(config, new BlockPos(entity));
+    }
+
+    /** Targets the highest matching block in the column the mob's body would occupy at the given footing. */
+    private boolean tryTargetDoor(ConfigSnapshot.DoorBreaking config, BlockPos footPos) {
+        BlockTargetMap targets = targetsOverride != null ? targetsOverride : config.targetBlocks();
+        boolean needsTool = (needsToolOverride != null ? needsToolOverride : config.requiresTools())
+                && !isMadCreeper(config);
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(footPos.getX(),
+                footPos.getY() - 1 + (int) Math.ceil(entity.height), footPos.getZ());
+        while (pos.getY() >= footPos.getY()) {
+            if (entity.world.isBlockLoaded(pos)) {
+                IBlockState state = entity.world.getBlockState(pos);
+                if (targets.matches(state) && BlockBreaking.mayDestroy(state, entity, needsTool, entity.world, pos)) {
+                    targetState = state;
+                    doorPosition = pos.toImmutable();
+                    return true;
+                }
+            }
+            pos.setY(pos.getY() - 1);
+        }
+        return false;
+    }
+
+    private void clearBreakProgress() {
+        if (lastProgress != BlockBreaking.NO_PROGRESS) {
+            entity.world.sendBlockBreakProgress(entity.getEntityId(), doorPosition, BlockBreaking.NO_PROGRESS);
+            lastProgress = BlockBreaking.NO_PROGRESS;
         }
     }
 

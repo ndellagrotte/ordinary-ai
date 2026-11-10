@@ -55,12 +55,12 @@ final class ShamanTask extends EliteTask {
         eliteTag.setFloat(key, config.shamanHealAmount());
         // Saved in full so the list doubles as an example for anyone editing it by hand
         NBTTagList defaults = new NBTTagList();
-        defaults.appendTag(new PotionEffect(MobEffects.STRENGTH, 50, 0
-        ).writeCustomPotionEffectToNBT(new NBTTagCompound()));
-        defaults.appendTag(new PotionEffect(MobEffects.RESISTANCE, 50, 0
-        ).writeCustomPotionEffectToNBT(new NBTTagCompound()));
-        defaults.appendTag(new PotionEffect(MobEffects.SPEED, 50, 0).writeCustomPotionEffectToNBT(new NBTTagCompound()
-        ));
+        defaults.appendTag(new PotionEffect(MobEffects.STRENGTH, 50,
+                0).writeCustomPotionEffectToNBT(new NBTTagCompound()));
+        defaults.appendTag(new PotionEffect(MobEffects.RESISTANCE, 50,
+                0).writeCustomPotionEffectToNBT(new NBTTagCompound()));
+        defaults.appendTag(new PotionEffect(MobEffects.SPEED, 50,
+                0).writeCustomPotionEffectToNBT(new NBTTagCompound()));
         eliteTag.setTag(EFFECTS_KEY, defaults);
     }
 
@@ -153,8 +153,7 @@ final class ShamanTask extends EliteTask {
 
     private List<EntityLiving> alliesAgainst(EntityLivingBase target) {
         return mob.world.getEntitiesWithinAABB(EntityLiving.class, mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
-            candidate -> candidate != mob && candidate.isEntityAlive() && candidate.getAttackTarget() == target
-        );
+                candidate -> candidate != mob && candidate.isEntityAlive() && candidate.getAttackTarget() == target);
     }
 
 }

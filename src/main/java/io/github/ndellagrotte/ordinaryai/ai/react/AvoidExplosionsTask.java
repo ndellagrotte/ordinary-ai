@@ -54,8 +54,7 @@ public final class AvoidExplosionsTask extends EntityAIBase implements OrdinaryT
         // Finding a way out is the expensive part, so do not repeat a failed attempt straight away
         retryAt = now + RETRY_DELAY;
         Vec3d away = RandomPositionGenerator.findRandomTargetBlockAwayFrom(mob, 16, 7,
-            new Vec3d(found.posX, found.posY, found.posZ)
-        );
+                new Vec3d(found.posX, found.posY, found.posZ));
         if (away == null || found.getDistanceSq(away.x, away.y, away.z) < found.getDistanceSq(mob)) {
             return false;
         }

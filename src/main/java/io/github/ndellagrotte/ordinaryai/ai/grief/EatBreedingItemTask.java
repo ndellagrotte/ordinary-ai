@@ -55,9 +55,8 @@ public final class EatBreedingItemTask extends EntityAIBase implements OrdinaryT
             return false;
         }
         List<EntityItem> items = mob.world.getEntitiesWithinAABB(EntityItem.class,
-            mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
-            item -> item.isEntityAlive() && mob.isBreedingItem(item.getItem())
-        );
+                mob.getEntityBoundingBox().grow(16.0, 8.0, 16.0),
+                item -> item.isEntityAlive() && mob.isBreedingItem(item.getItem()));
         food = TaskUtil.pickRandom(items, mob.getRNG());
         return food != null;
     }
@@ -65,12 +64,12 @@ public final class EatBreedingItemTask extends EntityAIBase implements OrdinaryT
     @Override
     public boolean shouldContinueExecuting() {
         EntityItem target = food;
-        return !mob.isRiding() &&
-            target != null &&
-            target.isEntityAlive() &&
-            TaskUtil.now(mob) <= giveUpAt &&
-            mob.isBreedingItem(target.getItem()) &&
-            !mob.getNavigator().noPath();
+        return !mob.isRiding()
+                && target != null
+                && target.isEntityAlive()
+                && TaskUtil.now(mob) <= giveUpAt
+                && mob.isBreedingItem(target.getItem())
+                && !mob.getNavigator().noPath();
     }
 
     @Override
@@ -117,8 +116,7 @@ public final class EatBreedingItemTask extends EntityAIBase implements OrdinaryT
             mob.heal(healAmount);
         }
         mob.world.playSound(null, new BlockPos(mob), SoundEvents.ENTITY_PLAYER_BURP, mob.getSoundCategory(), 0.5F,
-            mob.getRNG().nextFloat() * 0.1F + 0.9F
-        );
+                mob.getRNG().nextFloat() * 0.1F + 0.9F);
         mob.getNavigator().clearPath();
         target.setDead();
         food = null;

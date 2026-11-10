@@ -26,9 +26,8 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
  * Mod entry point. Everything the mod does happens on the logical server, so clients can connect without it.
  */
 @Mod(modid = OrdinaryAI.MOD_ID, name = OrdinaryAI.NAME, version = OrdinaryAI.VERSION,
-    acceptedMinecraftVersions = "[1.12.2]", acceptableRemoteVersions = "*",
-    guiFactory = "io.github.ndellagrotte.ordinaryai.config.client.ConfigGuiFactory"
-)
+        acceptedMinecraftVersions = "[1.12.2]", acceptableRemoteVersions = "*",
+        guiFactory = "io.github.ndellagrotte.ordinaryai.config.client.ConfigGuiFactory")
 public final class OrdinaryAI {
 
     public static final String MOD_ID = "@{MOD_ID}";

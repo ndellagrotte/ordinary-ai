@@ -50,9 +50,8 @@ public final class DodgeArrowsTask extends EntityAIBase implements OrdinaryTask 
         double halfWidth = arrow.width + 0.3F;
 
         AxisAlignedBB reach = new AxisAlignedBB(arrow.posX - HORIZONTAL_RANGE, arrow.posY - VERTICAL_RANGE - 1.0,
-            arrow.posZ - HORIZONTAL_RANGE, arrow.posX + HORIZONTAL_RANGE, arrow.posY + VERTICAL_RANGE + 1.0,
-            arrow.posZ + HORIZONTAL_RANGE
-        );
+                arrow.posZ - HORIZONTAL_RANGE, arrow.posX + HORIZONTAL_RANGE, arrow.posY + VERTICAL_RANGE + 1.0,
+                arrow.posZ + HORIZONTAL_RANGE);
         List<EntityCreature> nearby = arrow.world.getEntitiesWithinAABB(EntityCreature.class, reach);
         for (EntityCreature creature : nearby) {
             if (Math.abs((int) creature.posY - (int) arrow.posY) > VERTICAL_RANGE) {
@@ -66,16 +65,6 @@ public final class DodgeArrowsTask extends EntityAIBase implements OrdinaryTask 
                     task.offer(ux, uz);
                 }
             }
-        }
-    }
-
-    private void offer(double ux, double uz) {
-        long now = TaskUtil.now(mob);
-        if (now >= readyAt && mob.getRNG().nextFloat() < chance) {
-            pending = true;
-            arrowDirX = ux;
-            arrowDirZ = uz;
-            pendingUntil = now + REACTION_WINDOW;
         }
     }
 
@@ -106,6 +95,16 @@ public final class DodgeArrowsTask extends EntityAIBase implements OrdinaryTask 
     @Override
     public boolean shouldContinueExecuting() {
         return false;
+    }
+
+    private void offer(double ux, double uz) {
+        long now = TaskUtil.now(mob);
+        if (now >= readyAt && mob.getRNG().nextFloat() < chance) {
+            pending = true;
+            arrowDirX = ux;
+            arrowDirZ = uz;
+            pendingUntil = now + REACTION_WINDOW;
+        }
     }
 
 }

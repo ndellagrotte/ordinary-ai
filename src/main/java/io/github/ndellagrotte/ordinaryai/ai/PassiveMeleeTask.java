@@ -44,8 +44,9 @@ public final class PassiveMeleeTask extends EntityAIAttackMelee implements Ordin
 
     /** Stands in for {@code EntityMob.attackEntityAsMob}, which passive mobs do not implement. */
     private void attack(EntityLivingBase target) {
-        float damage = baseDamage() +
-            EnchantmentHelper.getModifierForCreature(attacker.getHeldItemMainhand(), target.getCreatureAttribute());
+        float damage = baseDamage()
+                + EnchantmentHelper.getModifierForCreature(attacker.getHeldItemMainhand(),
+                        target.getCreatureAttribute());
         if (!target.attackEntityFrom(DamageSource.causeMobDamage(attacker), damage)) {
             return;
         }
@@ -53,8 +54,7 @@ public final class PassiveMeleeTask extends EntityAIAttackMelee implements Ordin
         int knockback = EnchantmentHelper.getKnockbackModifier(attacker);
         if (knockback > 0) {
             target.knockBack(attacker, knockback * 0.5F, MathHelper.sin(attacker.rotationYaw * 0.0175F),
-                -MathHelper.cos(attacker.rotationYaw * 0.0175F)
-            );
+                    -MathHelper.cos(attacker.rotationYaw * 0.0175F));
             attacker.motionX *= 0.6;
             attacker.motionZ *= 0.6;
         }
@@ -76,7 +76,7 @@ public final class PassiveMeleeTask extends EntityAIAttackMelee implements Ordin
 
     private float baseDamage() {
         IAttributeInstance attribute = attacker.getAttributeMap()
-            .getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE);
+                .getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE);
         if (attribute != null) {
             return (float) attribute.getAttributeValue();
         }
@@ -95,10 +95,10 @@ public final class PassiveMeleeTask extends EntityAIAttackMelee implements Ordin
     private void tryDisableShield(EntityPlayer player) {
         ItemStack weapon = attacker.getHeldItemMainhand();
         ItemStack shield = player.isHandActive() ? player.getActiveItemStack() : ItemStack.EMPTY;
-        if (weapon.isEmpty() ||
-            shield.isEmpty() ||
-            !weapon.getItem().canDisableShield(weapon, shield, player, attacker) ||
-            !shield.getItem().isShield(shield, player)) {
+        if (weapon.isEmpty()
+                || shield.isEmpty()
+                || !weapon.getItem().canDisableShield(weapon, shield, player, attacker)
+                || !shield.getItem().isShield(shield, player)) {
             return;
         }
         float chance = 0.25F + EnchantmentHelper.getEfficiencyModifier(attacker) * 0.05F;

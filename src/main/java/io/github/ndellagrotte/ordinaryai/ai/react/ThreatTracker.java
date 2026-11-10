@@ -47,17 +47,10 @@ public final class ThreatTracker {
 
     /** Returns true for entities that are dangerous from the moment they exist. */
     public static boolean isExplosive(Entity entity) {
-        return entity instanceof EntityTNTPrimed ||
-            entity instanceof EntityLargeFireball ||
-            entity instanceof EntityDragonFireball ||
-            entity instanceof EntityWitherSkull;
-    }
-
-    private static boolean isStillDangerous(Entity threat) {
-        if (threat.isDead || !threat.isAddedToWorld()) {
-            return false;
-        }
-        return !(threat instanceof EntityCreeper creeper) || creeper.getCreeperState() > 0;
+        return entity instanceof EntityTNTPrimed
+                || entity instanceof EntityLargeFireball
+                || entity instanceof EntityDragonFireball
+                || entity instanceof EntityWitherSkull;
     }
 
     /**
@@ -68,6 +61,13 @@ public final class ThreatTracker {
         for (ThreatTracker tracker : BY_WORLD.values()) {
             tracker.threats.removeIf(threat -> !isStillDangerous(threat));
         }
+    }
+
+    private static boolean isStillDangerous(Entity threat) {
+        if (threat.isDead || !threat.isAddedToWorld()) {
+            return false;
+        }
+        return !(threat instanceof EntityCreeper creeper) || creeper.getCreeperState() > 0;
     }
 
     /** Starts tracking an entity. Adding one that is already tracked does nothing. */

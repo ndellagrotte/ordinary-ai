@@ -91,6 +91,20 @@ final class ConfigReader {
         return (float) real(key, fallbackDouble, amended, minDouble, maxDouble, true);
     }
 
+    MobList mobs(String key, String[] fallback, String comment) {
+        String amended = amendList(comment, "Entity_Array", fallback,
+                "entity_id <extra_data>, ~entity_id <extra_data>");
+        String[] lines = file.get(category, key, fallback, amended).getStringList();
+        return MobList.parse(lines, ConfigReader::entityClass, message -> warn.accept(where(key) + message));
+    }
+
+    BlockTargetMap blocks(String key, String[] fallback, String comment) {
+        String amended = amendList(comment, "Block_Array", fallback,
+                "mod_id:block_id, mod_id:block_id[<properties>], mod_id:*");
+        String[] lines = file.get(category, key, fallback, amended).getStringList();
+        return BlockTargetMap.parse(Arrays.asList(lines), message -> warn.accept(where(key) + message));
+    }
+
     private double real(String key, double fallback, String amended, double min, double max, boolean clamp) {
         Property property = file.get(category, key, fallback, amended, min, max);
         double value = property.getDouble(fallback);
@@ -103,21 +117,6 @@ final class ConfigReader {
             property.set(clamped);
         }
         return clamped;
-    }
-
-    MobList mobs(String key, String[] fallback, String comment) {
-        String amended = amendList(comment, "Entity_Array", fallback, "entity_id <extra_data>, ~entity_id <extra_data>"
-        );
-        String[] lines = file.get(category, key, fallback, amended).getStringList();
-        return MobList.parse(lines, ConfigReader::entityClass, message -> warn.accept(where(key) + message));
-    }
-
-    BlockTargetMap blocks(String key, String[] fallback, String comment) {
-        String amended = amendList(comment, "Block_Array", fallback,
-            "mod_id:block_id, mod_id:block_id[<properties>], mod_id:*"
-        );
-        String[] lines = file.get(category, key, fallback, amended).getStringList();
-        return BlockTargetMap.parse(Arrays.asList(lines), message -> warn.accept(where(key) + message));
     }
 
     private String where(String key) {

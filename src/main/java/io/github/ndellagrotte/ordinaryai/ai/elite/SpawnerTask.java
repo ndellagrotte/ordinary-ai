@@ -47,6 +47,14 @@ final class SpawnerTask extends EliteTask {
         }
     }
 
+    static void equip(EntityLiving mob, ConfigSnapshot.Elite config) {
+        mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Blocks.MOB_SPAWNER));
+        mob.setDropChance(EntityEquipmentSlot.HEAD, 0.0F);
+        modify(mob, SharedMonsterAttributes.MOVEMENT_SPEED, "Spawner speed boost", config.spawnerSpeedBoost(),
+                MULTIPLY_BASE);
+        modify(mob, SharedMonsterAttributes.MAX_HEALTH, "Spawner health boost", config.spawnerHealthBoost(), ADD);
+    }
+
     private static NBTTagCompound defaultSettings() {
         NBTTagCompound settings = new NBTTagCompound();
         settings.setShort("Delay", (short) 20);
@@ -57,15 +65,6 @@ final class SpawnerTask extends EliteTask {
         settings.setShort("RequiredPlayerRange", (short) 16);
         settings.setShort("SpawnRange", (short) 4);
         return settings;
-    }
-
-    static void equip(EntityLiving mob, ConfigSnapshot.Elite config) {
-        mob.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Blocks.MOB_SPAWNER));
-        mob.setDropChance(EntityEquipmentSlot.HEAD, 0.0F);
-        modify(mob, SharedMonsterAttributes.MOVEMENT_SPEED, "Spawner speed boost", config.spawnerSpeedBoost(),
-            MULTIPLY_BASE
-        );
-        modify(mob, SharedMonsterAttributes.MAX_HEALTH, "Spawner health boost", config.spawnerHealthBoost(), ADD);
     }
 
     @Override
@@ -115,9 +114,8 @@ final class SpawnerTask extends EliteTask {
             // The timer resets right after a spawn, so anything that has not ticked yet is one of ours: send it in
             EntityLivingBase target = host.getAttackTarget();
             for (EntityLiving spawned : host.world.getEntitiesWithinAABB(EntityLiving.class,
-                host.getEntityBoundingBox().grow(range + 4.0, 2.0, range + 4.0),
-                candidate -> candidate != host && candidate.ticksExisted == 0
-            )) {
+                    host.getEntityBoundingBox().grow(range + 4.0, 2.0, range + 4.0),
+                    candidate -> candidate != host && candidate.ticksExisted == 0)) {
                 spawned.setAttackTarget(target);
                 spawned.setRevengeTarget(target);
             }
