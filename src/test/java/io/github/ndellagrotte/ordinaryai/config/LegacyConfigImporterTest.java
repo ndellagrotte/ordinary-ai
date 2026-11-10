@@ -21,7 +21,7 @@ class LegacyConfigImporterTest {
     @Test
     void copiesTheLegacyFileAndLeavesItInPlace() throws IOException {
         Path legacy = configDir.resolve(LegacyConfigImporter.LEGACY_FILE_NAME);
-        Path target = configDir.resolve("ordinaryai.cfg");
+        Path target = configDir.resolve("specialai.cfg");
         Files.writeString(legacy, "old settings");
 
         assertThat(LegacyConfigImporter.importIfAbsent(configDir, target)).isTrue();
@@ -31,7 +31,7 @@ class LegacyConfigImporterTest {
 
     @Test
     void neverOverwritesAnExistingConfig() throws IOException {
-        Path target = configDir.resolve("ordinaryai.cfg");
+        Path target = configDir.resolve("specialai.cfg");
         Files.writeString(configDir.resolve(LegacyConfigImporter.LEGACY_FILE_NAME), "old settings");
         Files.writeString(target, "current settings");
 
@@ -41,7 +41,7 @@ class LegacyConfigImporterTest {
 
     @Test
     void doesNothingWithoutALegacyFile() throws IOException {
-        Path target = configDir.resolve("ordinaryai.cfg");
+        Path target = configDir.resolve("specialai.cfg");
 
         assertThat(LegacyConfigImporter.importIfAbsent(configDir, target)).isFalse();
         assertThat(target).doesNotExist();

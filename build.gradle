@@ -7,7 +7,8 @@ plugins {
 group = root_package
 
 base {
-    archivesName = mod_id
+    // The jar keeps the project's name. The mod id is Special AI's, and would name it after that mod
+    archivesName = 'ordinaryai'
 }
 
 def accessTransformerNames = access_transformers.tokenize()
