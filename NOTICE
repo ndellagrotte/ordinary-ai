@@ -1,0 +1,24 @@
+Ordinary AI
+Copyright (c) 2026 Nicholas DellaGrotte
+
+This mod is a port of Special AI 1.1.0 for Minecraft 1.12.2.
+Special AI is Copyright (c) 2016-2019 Father Toast.
+  Source:  https://github.com/FatherToast/SpecialAI (branch 1.12.2)
+  Project: https://www.curseforge.com/minecraft/mc-mods/special-ai
+
+Licensing
+---------
+Ordinary AI is distributed under the GNU General Public License, version 3 only (see LICENSE).
+
+The 1.12.2 branch of Special AI carries no license file. Special AI is published on CurseForge as GPLv3, and
+later branches of its repository include the GPLv3 text (src/main/resources/LICENSE.txt, without "or later"
+wording). This port is licensed accordingly.
+
+What was changed
+----------------
+The code was rewritten for the Cleanroom loader under a new mod id and package. Behaviour follows Special AI 1.1.0
+except where listed in src/main/resources/changelog.txt. The villager name syllables and job titles, the config
+option names and their descriptions, and the design of every AI pattern are Father Toast's work.
+
+The build template is CleanroomMC's CleanroomModTemplate. Its build scripts and style configuration files remain
+under their own terms.

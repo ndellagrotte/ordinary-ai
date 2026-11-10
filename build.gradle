@@ -11,8 +11,7 @@ base {
 }
 
 def accessTransformerNames = access_transformers.tokenize()
-def dependOnHei = depend_on_hei.toBoolean()
-def heiDependency = { dependOnHei ? it.requires('had-enough-items') : it.optional('had-enough-items') }
+def mixinConfigNames = ['mixins.ordinaryai.json']
 
 conventions {
     if (mod_authors) {
@@ -22,13 +21,11 @@ conventions {
         if (curseforge_project_id) {
             curseforge {
                 projectId = curseforge_project_id
-                heiDependency(it)
             }
         }
         if (modrinth_project_id) {
             modrinth {
                 projectId = modrinth_project_id
-                heiDependency(it)
             }
         }
     }
@@ -46,27 +43,11 @@ repositories {
             includeGroup 'curse.maven'
         }
     }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name 'CleanroomMC'
-                url 'https://maven.cleanroommc.com'
-            }
-        }
-        filter {
-            includeGroup 'mezz'
-        }
-    }
 }
 
 dependencies {
     implementation cleanroom.userdev(cleanroom_version) {
         accessTransformers.from(accessTransformerNames.collect { "src/main/resources/META-INF/$it" })
-    }
-    if (dependOnHei) {
-        implementation 'mezz:jei:4.36.1:dev'
-    } else {
-        runtimeOnly 'mezz:jei:4.36.1:dev'
     }
 }
 
@@ -94,6 +75,7 @@ tokenEnvoy {
 
 jar {
     manifest {
+        attributes 'MixinConfigs': mixinConfigNames.join(',')
         if (accessTransformerNames) {
             attributes 'FMLAT': accessTransformerNames.join(' ')
         }
@@ -114,7 +96,13 @@ tasks.matching { it.name in ['clearSkiesCheck', 'formatJavaCheck'] }.configureEa
     enabled = enable_formatting.toBoolean()
 }
 
+// `gradlew runServer -Dordinaryai.selftest=true` passes the flag on to the game, see README
+def selfTest = providers.systemProperty('ordinaryai.selftest')
+
 // TODO: fundamental Foundation issue
 tasks.withType(JavaExec).configureEach {
     systemProperty 'foundation.loadsall', 'true'
+    if (selfTest.present) {
+        systemProperty 'ordinaryai.selftest', selfTest.get()
+    }
 }
